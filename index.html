@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarRental - Aluguel de Carros</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1>🚗 CarRental API</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#clients" class="active">Clientes</a></li>
+            <li><a href="#rentals">Aluguéis</a></li>
+            <li><a href="#payments">Pagamentos</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <!-- Seção Clientes -->
+        <section id="clients" class="section">
+            <h2>👥 Clientes</h2>
+            <div class="card">
+                <h3>Nova Cliente</h3>
+                <form id="client-form">
+                    <div class="form-group">
+                        <label for="client-nome">Nome</label>
+                        <input type="text" id="client-nome" required placeholder="Nome completo">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-cpf">CPF</label>
+                        <input type="text" id="client-cpf" required placeholder="00000000000" maxlength="11">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-telefone">Telefone</label>
+                        <input type="text" id="client-telefone" required placeholder="(00) 00000-0000">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-email">Email</label>
+                        <input type="email" id="client-email" required placeholder="email@exemplo.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-endereco">Endereço</label>
+                        <input type="text" id="client-endereco" placeholder="Endereço completo">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cadastrar Cliente</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>Lista de Clientes</h3>
+                <div id="clients-list" class="list-empty">Carregando...</div>
+                <button class="btn btn-secondary" onclick="loadClients()">Atualizar</button>
+            </div>
+        </section>
+
+        <!-- Seção Aluguéis -->
+        <section id="rentals" class="section">
+            <h2>🚘 Aluguéis</h2>
+            <div class="card">
+                <h3>Novo Aluguel</h3>
+                <form id="rental-form">
+                    <div class="form-group">
+                        <label for="rental-cpf">CPF do Cliente</label>
+                        <input type="text" id="rental-cpf" required placeholder="00000000000">
+                    </div>
+                    <div class="form-group">
+                        <label for="rental-car-name">Nome do Carro</label>
+                        <input type="text" id="rental-car-name" required placeholder="Ex: Civic">
+                    </div>
+                    <div class="form-group">
+                        <label for="rental-car-type">Categoria</label>
+                        <input type="text" id="rental-car-type" placeholder="Ex: sedan">
+                    </div>
+                    <div class="form-group">
+                        <label for="rental-value">Valor</label>
+                        <input type="number" id="rental-value" step="0.01" required placeholder="300.00">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Criar Aluguel</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>Lista de Aluguéis</h3>
+                <div id="rentals-list" class="list-empty">Carregando...</div>
+                <button class="btn btn-secondary" onclick="loadRentals()">Atualizar</button>
+            </div>
+        </section>
+
+        <!-- Seção Pagamentos -->
+        <section id="payments" class="section">
+            <h2>💳 Pagamentos</h2>
+            <div class="card">
+                <h3>Novo Pagamento</h3>
+                <form id="payment-form">
+                    <div class="form-group">
+                        <label for="payment-rent-id">ID do Aluguel</label>
+                        <input type="number" id="payment-rent-id" required placeholder="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-valor">Valor Pago</label>
+                        <input type="number" id="payment-valor" step="0.01" required placeholder="300.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-metodo">Método</label>
+                        <select id="payment-metodo" required>
+                            <option value="PIX">PIX</option>
+                            <option value="CARTAO_CREDITO">Cartão de Crédito</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Realizar Pagamento</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>Lista de Pagamentos</h3>
+                <div id="payments-list" class="list-empty">Carregando...</div>
+                <button class="btn btn-secondary" onclick="loadPayments()">Atualizar</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
