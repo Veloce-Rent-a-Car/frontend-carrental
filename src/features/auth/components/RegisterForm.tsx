@@ -12,7 +12,7 @@ export function RegisterForm() {
 
   const onSubmit = async (data: RegisterForm) => {
     try {
-      await registerUser(data.nome, data.email, data.senha)
+      await registerUser(data)
     } catch (err) {
       // Error handled by auth context
     }
@@ -27,6 +27,24 @@ export function RegisterForm() {
         error={errors.nome?.message}
         {...register('nome')}
         autoComplete="name"
+        maxLength={100}
+      />
+      <Input
+        label="CPF"
+        type="text"
+        placeholder="12345678901"
+        error={errors.cpf?.message}
+        {...register('cpf')}
+        maxLength={11}
+      />
+      <Input
+        label="Telefone"
+        type="tel"
+        placeholder="(11) 99999-9999"
+        error={errors.telefone?.message}
+        {...register('telefone')}
+        autoComplete="tel"
+        maxLength={20}
       />
       <Input
         label="Email"
@@ -37,11 +55,20 @@ export function RegisterForm() {
         autoComplete="email"
       />
       <Input
+        label="Endereço"
+        type="text"
+        placeholder="Rua, número, bairro, cidade"
+        error={errors.endereco?.message}
+        {...register('endereco')}
+        autoComplete="street-address"
+        maxLength={200}
+      />
+      <Input
         label="Senha"
         type="password"
         placeholder="••••••••"
-        error={errors.senha?.message}
-        {...register('senha')}
+        error={errors.password?.message}
+        {...register('password')}
         autoComplete="new-password"
       />
       <Button type="submit" className="w-full" loading={isSubmitting}>

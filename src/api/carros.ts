@@ -1,5 +1,6 @@
 import { api } from './client'
 import type { Carro, CarroRequest, CsvImportResult } from './types'
+import { getAccessToken } from './client'
 
 export async function getCarros(): Promise<Carro[]> {
   return api.get<Carro[]>('/api/carros')
@@ -22,9 +23,10 @@ export async function deleteCarro(id: number): Promise<void> {
 }
 
 export async function exportCarrosCsv(): Promise<Blob> {
-  const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/carros/csv/export`, {
+  const token = getAccessToken()
+  const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/carros/csv/export`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,
+      Authorization: `Bearer ${token || ''}`,
     },
   })
   if (!response.ok) throw new Error('Erro ao exportar CSV')
@@ -32,13 +34,14 @@ export async function exportCarrosCsv(): Promise<Blob> {
 }
 
 export async function importCarrosCsv(file: File): Promise<CsvImportResult> {
+  const token = getAccessToken()
   const formData = new FormData()
   formData.append('file', file)
   
-  const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/carros/csv/import`, {
+  const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api/carros/csv/import`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,
+      Authorization: `Bearer ${token || ''}`,
     },
     body: formData,
   })

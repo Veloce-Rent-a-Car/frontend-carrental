@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getPagamentos, createPagamento } from '@/api/pagamentos'
-import type { PagamentoRequest } from '@/api/types'
+import type { NewPaymentDTO, Payment } from '@/api/types'
 
 export function usePagamentos() {
-  return useQuery({
+  return useQuery<Payment[]>({
     queryKey: ['pagamentos'],
     queryFn: getPagamentos,
   })
@@ -12,7 +12,7 @@ export function usePagamentos() {
 export function useCriarPagamento() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: PagamentoRequest) => createPagamento(data),
+    mutationFn: (data: NewPaymentDTO) => createPagamento(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pagamentos'] })
       queryClient.invalidateQueries({ queryKey: ['alugueis'] })

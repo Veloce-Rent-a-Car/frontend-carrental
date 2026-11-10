@@ -1,41 +1,41 @@
 import { Table } from '@/components'
-import { formatCurrency, formatDate, getStatusBadgeClass, getStatusLabel } from '@/lib/formatters'
-import type { Aluguel } from '@/api/types'
+import { formatCurrency, formatDate, getStatusBadgeClass, getStatusLabel, formatCpf } from '@/lib/formatters'
+import type { RentModel } from '@/api/types'
 
 interface AluguelTableProps {
-  alugueis: Aluguel[]
+  alugueis: RentModel[]
 }
 
 export function AluguelTable({ alugueis }: AluguelTableProps) {
   const columns = [
-    { key: 'id', header: 'ID', render: (a: Aluguel) => <code>#{a.id}</code> },
+    { key: 'id', header: 'ID', render: (a: RentModel) => <code>#{a.id}</code> },
     {
-      key: 'cliente',
+      key: 'client',
       header: 'Cliente',
-      render: (a: Aluguel) => (
+      render: (a: RentModel) => (
         <div>
-          <p className="font-medium">{a.cliente.nome}</p>
-          <p className="text-xs text-slate-500">{a.cliente.cpf}</p>
+          <p className="font-medium">{a.client.name}</p>
+          <p className="text-xs text-slate-500">{formatCpf(a.client.cpf)}</p>
         </div>
       ),
     },
     {
-      key: 'carro',
+      key: 'car',
       header: 'Carro',
-      render: (a: Aluguel) => (
+      render: (a: RentModel) => (
         <div>
-          <p className="font-medium">{a.carro.marca} {a.carro.modelo}</p>
-          <p className="text-xs text-slate-500">{a.carro.placa}</p>
+          <p className="font-medium">{a.car.modelo}</p>
+          <p className="text-xs text-slate-500">{a.car.categoria}</p>
         </div>
       ),
     },
-    { key: 'dataInicio', header: 'Início', render: (a: Aluguel) => formatDate(a.dataInicio) },
-    { key: 'dataFim', header: 'Fim', render: (a: Aluguel) => formatDate(a.dataFim) },
-    { key: 'valorTotal', header: 'Total', render: (a: Aluguel) => formatCurrency(a.valorTotal) },
+    { key: 'startDate', header: 'Início', render: (a: RentModel) => formatDate(a.startDate) },
+    { key: 'endDate', header: 'Fim', render: (a: RentModel) => a.endDate ? formatDate(a.endDate) : '—' },
+    { key: 'rentValue', header: 'Total', render: (a: RentModel) => formatCurrency(a.rentValue) },
     {
       key: 'status',
       header: 'Status',
-      render: (a: Aluguel) => (
+      render: (a: RentModel) => (
         <span className={getStatusBadgeClass(a.status)}>{getStatusLabel(a.status)}</span>
       ),
     },

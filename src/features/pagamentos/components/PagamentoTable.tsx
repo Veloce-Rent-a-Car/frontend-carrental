@@ -1,38 +1,38 @@
 import { Table } from '@/components'
 import { formatCurrency, formatDateTime, getStatusBadgeClass, getStatusLabel } from '@/lib/formatters'
-import type { Pagamento } from '@/api/types'
+import type { Payment } from '@/api/types'
 
 interface PagamentoTableProps {
-  pagamentos: Pagamento[]
+  pagamentos: Payment[]
 }
 
 export function PagamentoTable({ pagamentos }: PagamentoTableProps) {
   const columns = [
-    { key: 'id', header: 'ID', render: (p: Pagamento) => <code>#{p.id}</code> },
+    { key: 'id', header: 'ID', render: (p: Payment) => <code>#{p.id}</code> },
     {
-      key: 'aluguel',
+      key: 'rent',
       header: 'Aluguel',
-      render: (p: Pagamento) => (
+      render: (p: Payment) => (
         <div>
-          <p className="font-medium">#{p.aluguel.id}</p>
-          <p className="text-xs text-slate-500">{p.aluguel.cliente.nome}</p>
+          <p className="font-medium">#{p.rent.id}</p>
+          <p className="text-xs text-slate-500">{p.rent.client.name}</p>
         </div>
       ),
     },
-    { key: 'valorPago', header: 'Valor', render: (p: Pagamento) => formatCurrency(p.valorPago) },
+    { key: 'valorPago', header: 'Valor', render: (p: Payment) => formatCurrency(p.valorPago) },
     {
       key: 'metodoPagamento',
       header: 'Método',
-      render: (p: Pagamento) => p.metodoPagamento.replace('_', ' '),
+      render: (p: Payment) => p.metodoPagamento.replace('_', ' '),
     },
     {
       key: 'status',
       header: 'Status',
-      render: (p: Pagamento) => (
+      render: (p: Payment) => (
         <span className={getStatusBadgeClass(p.status)}>{getStatusLabel(p.status)}</span>
       ),
     },
-    { key: 'dataPagamento', header: 'Data', render: (p: Pagamento) => formatDateTime(p.dataPagamento) },
+    { key: 'dataPagamento', header: 'Data', render: (p: Payment) => formatDateTime(p.dataPagamento) },
   ]
 
   return <Table data={pagamentos} columns={columns} rowKey={(p) => p.id} emptyMessage="Nenhum pagamento encontrado" />

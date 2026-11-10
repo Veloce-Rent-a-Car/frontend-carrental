@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Button, Input } from '@/components'
+import { Button, Input, Select } from '@/components'
 import { carroSchema, type CarroForm } from '@/lib/validation'
 import { useCriarCarro, useAtualizarCarro } from '../hooks/useCarros'
 import { useToast } from '@/components'
@@ -20,12 +20,11 @@ export function CarroForm({ initialData, onClose }: CarroFormProps) {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<CarroForm>({
     resolver: zodResolver(carroSchema),
     defaultValues: initialData ? {
-      marca: initialData.marca,
       modelo: initialData.modelo,
-      ano: initialData.ano,
       placa: initialData.placa,
-      cor: initialData.cor,
-      valorDiaria: initialData.valorDiaria,
+      categoria: initialData.categoria,
+      valorDaDiaria: initialData.valorDaDiaria,
+      statusDisponibilidade: initialData.statusDisponibilidade,
     } : undefined,
   })
 
@@ -53,26 +52,26 @@ export function CarroForm({ initialData, onClose }: CarroFormProps) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
-          label="Marca"
-          placeholder="Ex: Volkswagen"
-          error={errors.marca?.message}
-          {...register('marca')}
-        />
-        <Input
           label="Modelo"
           placeholder="Ex: Gol"
           error={errors.modelo?.message}
           {...register('modelo')}
         />
+        <Select
+          label="Categoria"
+          placeholder="Selecione"
+          options={[
+            { value: 'ECONOMICO', label: 'Econômico' },
+            { value: 'INTERMEDIARIO', label: 'Intermediário' },
+            { value: 'EXECUTIVO', label: 'Executivo' },
+            { value: 'SUV', label: 'SUV' },
+            { value: 'PICAPE', label: 'Picape' },
+          ]}
+          error={errors.categoria?.message}
+          {...register('categoria')}
+        />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Input
-          label="Ano"
-          type="number"
-          placeholder="2024"
-          error={errors.ano?.message}
-          {...register('ano', { valueAsNumber: true })}
-        />
         <Input
           label="Placa"
           placeholder="ABC1D23"
@@ -81,20 +80,25 @@ export function CarroForm({ initialData, onClose }: CarroFormProps) {
           maxLength={7}
         />
         <Input
-          label="Cor"
-          placeholder="Prata"
-          error={errors.cor?.message}
-          {...register('cor')}
+          label="Valor da Diária"
+          type="number"
+          step="0.01"
+          placeholder="150.00"
+          error={errors.valorDaDiaria?.message}
+          {...register('valorDaDiaria', { valueAsNumber: true })}
+        />
+        <Select
+          label="Status"
+          placeholder="Selecione"
+          options={[
+            { value: 'DISPONIVEL', label: 'Disponível' },
+            { value: 'ALUGADO', label: 'Alugado' },
+            { value: 'MANUTENCAO', label: 'Manutenção' },
+          ]}
+          error={errors.statusDisponibilidade?.message}
+          {...register('statusDisponibilidade')}
         />
       </div>
-      <Input
-        label="Valor da Diária"
-        type="number"
-        step="0.01"
-        placeholder="150.00"
-        error={errors.valorDiaria?.message}
-        {...register('valorDiaria', { valueAsNumber: true })}
-      />
       <div className="flex gap-3 pt-4">
         <Button type="button" variant="secondary" onClick={onClose} className="flex-1">
           Cancelar

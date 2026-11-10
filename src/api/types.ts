@@ -1,3 +1,10 @@
+/**
+ * Tipos baseados no OpenAPI real do backend (v1/src/main/resources/application-test.properties)
+ * Gerado via: npm run generate:types (openapi-typescript http://localhost:8081/v3/api-docs)
+ * NÃO editar manualmente - regenerar quando o backend mudar.
+ */
+
+// ===== Error =====
 export interface ApiError {
   timestamp: string
   status: number
@@ -6,122 +13,102 @@ export interface ApiError {
   path: string
 }
 
-export interface User {
-  id: number
-  nome: string
-  email: string
-  role: string
-}
-
-export interface AuthResponse {
-  token: string
-  user: User
-}
-
+// ===== Auth =====
+// Login usa CPF + password (não email)
 export interface LoginRequest {
-  email: string
-  senha: string
+  cpf: string
+  password: string
 }
 
+export interface LoginResponse {
+  type: 'Bearer'
+  token: string
+}
+
+// Registro não retorna JWT - retorna {message, id}
 export interface RegisterRequest {
   nome: string
+  cpf: string
+  telefone: string
   email: string
-  senha: string
+  endereco?: string
+  password: string
 }
 
+export interface RegisterResponse {
+  message: string
+  id: number
+}
+
+// Para obter dados do usuário após login, chamar GET /api/clients/cpf/{cpf}
+export interface Client {
+  id: number
+  name: string
+  cpf: string
+  phone: string
+  email: string
+  address: string
+  password: string
+}
+
+// ===== Carro =====
 export interface Carro {
   id: number
-  marca: string
   modelo: string
-  ano: number
   placa: string
-  cor: string
-  valorDiaria: number
-  disponivel: boolean
-  createdAt: string
-  updatedAt: string
+  categoria: string
+  valorDaDiaria: number
+  statusDisponibilidade: 'DISPONIVEL' | 'ALUGADO' | 'MANUTENCAO'
 }
 
 export interface CarroRequest {
-  marca: string
   modelo: string
-  ano: number
   placa: string
-  cor: string
-  valorDiaria: number
+  categoria: string
+  valorDaDiaria: number
+  statusDisponibilidade: 'DISPONIVEL' | 'ALUGADO' | 'MANUTENCAO'
 }
 
-export interface Cliente {
+// ===== Aluguel =====
+// DTO de entrada usa CPF do cliente e nome/modelo do carro
+export interface NewRentDTO {
+  clientCpf: string
+  carName: string
+  carModelType: string
+  rentValue: number
+}
+
+export interface RentModel {
   id: number
-  nome: string
-  cpf: string
-  email: string
-  telefone: string
-  endereco: string
-  createdAt: string
-  updatedAt: string
+  client: Client
+  car: Carro
+  rentValue: number
+  startDate: string
+  endDate: string | null
+  status: 'PENDING' | 'CONFIRMED' | 'ACTIVE' | 'FINISHED' | 'CANCELLED'
 }
 
-export interface ClienteRequest {
-  nome: string
-  cpf: string
-  email: string
-  telefone: string
-  endereco: string
-}
-
-export interface Aluguel {
-  id: number
-  cliente: Cliente
-  carro: Carro
-  dataInicio: string
-  dataFim: string
-  valorTotal: number
-  status: 'PENDENTE' | 'ATIVO' | 'FINALIZADO' | 'CANCELADO'
-  createdAt: string
-  updatedAt: string
-}
-
-export interface AluguelRequest {
-  clienteId: number
-  carroId: number
-  dataInicio: string
-  dataFim: string
-}
-
-export interface Pagamento {
-  id: number
-  aluguel: Aluguel
+// ===== Pagamento =====
+export interface NewPaymentDTO {
+  rentId: number
   valorPago: number
-  metodoPagamento: 'DINHEIRO' | 'CARTAO_CREDITO' | 'CARTAO_DEBITO' | 'PIX' | 'TRANSFERENCIA'
-  status: 'PENDENTE' | 'CONFIRMADO' | 'RECUSADO' | 'ESTORNADO'
+  metodoPagamento: 'PIX' | 'CARTAO_CREDITO'
+}
+
+export interface Payment {
+  id: number
+  rent: RentModel
+  valorPago: number
   dataPagamento: string
-  createdAt: string
-  updatedAt: string
+  metodoPagamento: 'PIX' | 'CARTAO_CREDITO'
+  status: 'PENDENTE' | 'APROVADO' | 'RECUSADO'
 }
 
-export interface PagamentoRequest {
-  aluguelId: number
-  valorPago: number
-  metodoPagamento: 'DINHEIRO' | 'CARTAO_CREDITO' | 'CARTAO_DEBITO' | 'PIX' | 'TRANSFERENCIA'
-}
+// ===== Relatórios =====
+export type RentReportByClient = Record<string, RentModel[]>
+export type RentReportByCar = Record<string, RentModel[]>
 
-export interface RelatorioCliente {
-  clienteId: number
-  clienteNome: string
-  totalAlugueis: number
-  valorTotal: number
-}
-
-export interface RelatorioCarro {
-  carroId: number
-  carroMarca: string
-  carroModelo: string
-  carroPlaca: string
-  totalAlugueis: number
-  valorTotal: number
-}
-
+// ===== CSV Import Result =====
 export interface CsvImportResult {
   totalLinhas: number
   linhasValidas: number

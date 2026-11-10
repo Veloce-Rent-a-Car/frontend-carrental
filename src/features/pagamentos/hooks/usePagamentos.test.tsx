@@ -4,7 +4,7 @@ import { usePagamentos, useCriarPagamento } from './usePagamentos'
 import { getPagamentos, createPagamento } from '@/api/pagamentos'
 import { ReactNode } from 'react'
 import { vi, describe, it, beforeEach, expect } from 'vitest'
-import type { Pagamento } from '@/api/types'
+import type { Payment } from '@/api/types'
 
 vi.mock('@/api/pagamentos')
 
@@ -26,8 +26,8 @@ describe('usePagamentos', () => {
   })
 
   it('should fetch pagamentos', async () => {
-    const mockPagamentos: Pagamento[] = [
-      { id: 1, aluguel: { id: 1, cliente: { id: 1, nome: 'Cliente', cpf: '123', email: '', telefone: '', endereco: '', createdAt: '', updatedAt: '' }, carro: { id: 1, marca: 'VW', modelo: 'Gol', ano: 2020, placa: 'ABC1D23', cor: 'Prata', valorDiaria: 150, disponivel: true, createdAt: '', updatedAt: '' }, dataInicio: '2024-01-01', dataFim: '2024-01-05', valorTotal: 600, status: 'ATIVO', createdAt: '', updatedAt: '' }, valorPago: 600, metodoPagamento: 'PIX', status: 'CONFIRMADO', dataPagamento: '2024-01-01T10:00:00', createdAt: '', updatedAt: '' },
+    const mockPagamentos: Payment[] = [
+      { id: 1, rent: { id: 1, client: { id: 1, name: 'Cliente', cpf: '123', phone: '', email: '', address: '', password: '' }, car: { id: 1, modelo: 'Gol', placa: 'ABC1D23', categoria: 'ECONOMICO', valorDaDiaria: 150, statusDisponibilidade: 'DISPONIVEL' }, rentValue: 600, startDate: '2024-01-01T00:00:00', endDate: '2024-01-05T00:00:00', status: 'ACTIVE' }, valorPago: 600, dataPagamento: '2024-01-01T10:00:00', metodoPagamento: 'PIX', status: 'APROVADO' },
     ]
     mockGetPagamentos.mockResolvedValue(mockPagamentos)
 
@@ -38,13 +38,13 @@ describe('usePagamentos', () => {
   })
 
   it('should create pagamento', async () => {
-    const newPagamento: Pagamento = { id: 2, aluguel: { id: 1, cliente: { id: 1, nome: 'Cliente', cpf: '123', email: '', telefone: '', endereco: '', createdAt: '', updatedAt: '' }, carro: { id: 1, marca: 'VW', modelo: 'Gol', ano: 2020, placa: 'ABC1D23', cor: 'Prata', valorDiaria: 150, disponivel: true, createdAt: '', updatedAt: '' }, dataInicio: '2024-01-01', dataFim: '2024-01-05', valorTotal: 600, status: 'ATIVO', createdAt: '', updatedAt: '' }, valorPago: 300, metodoPagamento: 'DINHEIRO', status: 'CONFIRMADO', dataPagamento: '2024-01-01T10:00:00', createdAt: '', updatedAt: '' }
+    const newPagamento: Payment = { id: 2, rent: { id: 1, client: { id: 1, name: 'Cliente', cpf: '123', phone: '', email: '', address: '', password: '' }, car: { id: 1, modelo: 'Gol', placa: 'ABC1D23', categoria: 'ECONOMICO', valorDaDiaria: 150, statusDisponibilidade: 'DISPONIVEL' }, rentValue: 600, startDate: '2024-01-01T00:00:00', endDate: '2024-01-05T00:00:00', status: 'ACTIVE' }, valorPago: 300, dataPagamento: '2024-01-01T10:00:00', metodoPagamento: 'PIX', status: 'APROVADO' }
     mockCreatePagamento.mockResolvedValue(newPagamento)
 
     const { result } = renderHook(() => useCriarPagamento(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync({ aluguelId: 1, valorPago: 300, metodoPagamento: 'DINHEIRO' })
+      await result.current.mutateAsync({ rentId: 1, valorPago: 300, metodoPagamento: 'PIX' })
     })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))

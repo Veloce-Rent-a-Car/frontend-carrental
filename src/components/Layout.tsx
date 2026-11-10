@@ -1,12 +1,11 @@
 import { Outlet, Link, useLocation, NavLink } from 'react-router-dom'
 import { useAuth } from '@/features/auth/hooks/useAuth'
-import type { ReactNode } from 'react'
 
 interface LayoutProps {
-  children?: ReactNode
+  children?: React.ReactNode
 }
 
-const Layout = ({ children }: LayoutProps) => {
+export default function Layout({ children }: LayoutProps) {
   const { user, logout } = useAuth()
   const location = useLocation()
 
@@ -46,7 +45,7 @@ const Layout = ({ children }: LayoutProps) => {
               </div>
               <div className="flex items-center gap-4">
                 <span className="text-sm text-slate-600 hidden sm:block">
-                  {user?.nome}
+                  {user?.name}
                 </span>
                 <button
                   onClick={logout}
@@ -65,5 +64,3 @@ const Layout = ({ children }: LayoutProps) => {
     </div>
   )
 }
-
-export default Layout

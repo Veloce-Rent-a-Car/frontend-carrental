@@ -4,7 +4,7 @@ import { useAlugueis, useCriarAluguel } from './useAlugueis'
 import { getAlugueis, createAluguel } from '@/api/alugueis'
 import { ReactNode } from 'react'
 import { vi, describe, it, beforeEach, expect } from 'vitest'
-import type { Aluguel } from '@/api/types'
+import type { RentModel } from '@/api/types'
 
 vi.mock('@/api/alugueis')
 
@@ -26,8 +26,8 @@ describe('useAlugueis', () => {
   })
 
   it('should fetch alugueis', async () => {
-    const mockAlugueis: Aluguel[] = [
-      { id: 1, cliente: { id: 1, nome: 'Cliente', cpf: '123', email: '', telefone: '', endereco: '', createdAt: '', updatedAt: '' }, carro: { id: 1, marca: 'VW', modelo: 'Gol', ano: 2020, placa: 'ABC1D23', cor: 'Prata', valorDiaria: 150, disponivel: true, createdAt: '', updatedAt: '' }, dataInicio: '2024-01-01', dataFim: '2024-01-05', valorTotal: 600, status: 'ATIVO', createdAt: '', updatedAt: '' },
+    const mockAlugueis: RentModel[] = [
+      { id: 1, client: { id: 1, name: 'Cliente', cpf: '123', phone: '', email: '', address: '', password: '' }, car: { id: 1, modelo: 'Gol', placa: 'ABC1D23', categoria: 'ECONOMICO', valorDaDiaria: 150, statusDisponibilidade: 'DISPONIVEL' }, rentValue: 600, startDate: '2024-01-01T00:00:00', endDate: '2024-01-05T00:00:00', status: 'ACTIVE' },
     ]
     mockGetAlugueis.mockResolvedValue(mockAlugueis)
 
@@ -38,13 +38,13 @@ describe('useAlugueis', () => {
   })
 
   it('should create aluguel', async () => {
-    const newAluguel: Aluguel = { id: 2, cliente: { id: 1, nome: 'Cliente', cpf: '123', email: '', telefone: '', endereco: '', createdAt: '', updatedAt: '' }, carro: { id: 1, marca: 'VW', modelo: 'Gol', ano: 2020, placa: 'ABC1D23', cor: 'Prata', valorDiaria: 150, disponivel: true, createdAt: '', updatedAt: '' }, dataInicio: '2024-02-01', dataFim: '2024-02-03', valorTotal: 300, status: 'PENDENTE', createdAt: '', updatedAt: '' }
+    const newAluguel: RentModel = { id: 2, client: { id: 1, name: 'Cliente', cpf: '123', phone: '', email: '', address: '', password: '' }, car: { id: 1, modelo: 'Gol', placa: 'ABC1D23', categoria: 'ECONOMICO', valorDaDiaria: 150, statusDisponibilidade: 'DISPONIVEL' }, rentValue: 300, startDate: '2024-02-01T00:00:00', endDate: '2024-02-03T00:00:00', status: 'PENDING' }
     mockCreateAluguel.mockResolvedValue(newAluguel)
 
     const { result } = renderHook(() => useCriarAluguel(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync({ clienteId: 1, carroId: 1, dataInicio: '2024-02-01', dataFim: '2024-02-03' })
+      await result.current.mutateAsync({ clientCpf: '12345678901', carName: 'Gol', carModelType: 'ECONOMICO', rentValue: 300 })
     })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
