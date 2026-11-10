@@ -3,6 +3,7 @@ import { ToastContainer } from '@/components'
 import { RelatorioTable } from '../components/RelatorioTable'
 import { useRelatorioPorCliente, useRelatorioPorCarro } from '@/features/alugueis/hooks/useAlugueis'
 import { formatCurrency } from '@/lib/formatters'
+import type { RentReportByClient, RentReportByCar } from '@/api/types'
 
 export function RelatoriosPage() {
   const [aba, setAba] = useState<'cliente' | 'carro'>('cliente')
@@ -13,7 +14,8 @@ export function RelatoriosPage() {
   const error = aba === 'cliente' ? errorCliente : errorCarro
   const data = aba === 'cliente' ? porCliente : porCarro
 
-  const totalGeral = data?.reduce((acc, r) => acc + r.valorTotal, 0) || 0
+  const totalGeral = data ? Object.values(data).flat().reduce((acc, r) => acc + r.rentValue, 0) : 0
+  const totalRegistros = data ? Object.values(data).flat().length : 0
 
   if (isLoading) {
     return (
@@ -66,11 +68,11 @@ export function RelatoriosPage() {
             Total Geral: <span className="text-blue-600">{formatCurrency(totalGeral)}</span>
           </p>
           <span className="text-sm text-slate-500">
-            {data?.length || 0} registro{data?.length !== 1 ? 's' : ''}
+            {totalRegistros} registro{totalRegistros !== 1 ? 's' : ''}
           </span>
         </div>
 
-        <RelatorioTable tipo={aba} data={data || []} />
+        <RelatorioTable tipo={aba} data={data ?? ({} as RentReportByClient | RentReportByCar)} />
       </div>
 
       <ToastContainer />

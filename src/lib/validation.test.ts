@@ -4,49 +4,90 @@ import { loginSchema, registerSchema, carroSchema, aluguelSchema, pagamentoSchem
 describe('Validation Schemas', () => {
   describe('loginSchema', () => {
     it('should validate valid login', () => {
-      const result = loginSchema.safeParse({ email: 'test@test.com', senha: 'password123' })
+      const result = loginSchema.safeParse({ cpf: '12345678901', password: 'password123' })
       expect(result.success).toBe(true)
     })
 
-    it('should reject invalid email', () => {
-      const result = loginSchema.safeParse({ email: 'invalid', senha: 'password123' })
+    it('should reject invalid CPF length', () => {
+      const result = loginSchema.safeParse({ cpf: '123', password: 'password123' })
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error.flatten().fieldErrors.email).toContain('Email inválido')
+        expect(result.error.flatten().fieldErrors.cpf).toContain('CPF deve ter 11 dígitos')
       }
     })
 
     it('should reject short password', () => {
-      const result = loginSchema.safeParse({ email: 'test@test.com', senha: '123' })
+      const result = loginSchema.safeParse({ cpf: '12345678901', password: '123' })
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error.flatten().fieldErrors.senha).toContain('Senha deve ter pelo menos 6 caracteres')
+        expect(result.error.flatten().fieldErrors.password).toContain('Senha deve ter pelo menos 6 caracteres')
       }
     })
 
     it('should reject empty fields', () => {
-      const result = loginSchema.safeParse({ email: '', senha: '' })
+      const result = loginSchema.safeParse({ cpf: '', password: '' })
       expect(result.success).toBe(false)
     })
   })
 
   describe('registerSchema', () => {
     it('should validate valid register', () => {
-      const result = registerSchema.safeParse({ nome: 'Test User', email: 'test@test.com', senha: 'password123' })
+      const result = registerSchema.safeParse({
+        nome: 'Test User',
+        cpf: '12345678901',
+        telefone: '11999999999',
+        email: 'test@test.com',
+        endereco: 'Rua Teste',
+        password: 'password123',
+      })
       expect(result.success).toBe(true)
     })
 
     it('should reject short name', () => {
-      const result = registerSchema.safeParse({ nome: 'Ab', email: 'test@test.com', senha: 'password123' })
+      const result = registerSchema.safeParse({
+        nome: 'Ab',
+        cpf: '12345678901',
+        telefone: '11999999999',
+        email: 'test@test.com',
+        password: 'password123',
+      })
       expect(result.success).toBe(false)
       if (!result.success) {
         expect(result.error.flatten().fieldErrors.nome).toContain('Nome deve ter pelo menos 3 caracteres')
       }
     })
+
+    it('should reject invalid CPF length', () => {
+      const result = registerSchema.safeParse({
+        nome: 'Test User',
+        cpf: '123',
+        telefone: '11999999999',
+        email: 'test@test.com',
+        password: 'password123',
+      })
+      expect(result.success).toBe(false)
+    })
+
+    it('should reject invalid email', () => {
+      const result = registerSchema.safeParse({
+        nome: 'Test User',
+        cpf: '12345678901',
+        telefone: '11999999999',
+        email: 'invalid',
+        password: 'password123',
+      })
+      expect(result.success).toBe(false)
+    })
   })
 
   describe('carroSchema', () => {
-    const validCarro = { marca: 'VW', modelo: 'Gol', ano: 2020, placa: 'ABC1D23', cor: 'Prata', valorDiaria: 150 }
+    const validCarro = {
+      modelo: 'Gol',
+      placa: 'ABC1D23',
+      categoria: 'ECONOMICO',
+      valorDaDiaria: 150,
+      statusDisponibilidade: 'DISPONIVEL' as const,
+    }
 
     it('should validate valid carro', () => {
       const result = carroSchema.safeParse(validCarro)
@@ -61,39 +102,47 @@ describe('Validation Schemas', () => {
       }
     })
 
-    it('should reject invalid year', () => {
-      const result = carroSchema.safeParse({ ...validCarro, ano: 1800 })
+    it('should reject negative valorDaDiaria', () => {
+      const result = carroSchema.safeParse({ ...validCarro, valorDaDiaria: -10 })
       expect(result.success).toBe(false)
-      if (!result.success) {
-        expect(result.error.flatten().fieldErrors.ano).toContain('Ano inválido')
-      }
     })
 
-    it('should reject negative valorDiaria', () => {
-      const result = carroSchema.safeParse({ ...validCarro, valorDiaria: -10 })
+    it('should reject invalid status', () => {
+      const result = carroSchema.safeParse({ ...validCarro, statusDisponibilidade: 'INVALID' as any })
       expect(result.success).toBe(false)
     })
   })
 
   describe('aluguelSchema', () => {
-    const validAluguel = { clienteId: 1, carroId: 1, dataInicio: '2024-01-01', dataFim: '2024-01-05' }
+    const validAluguel = {
+      clientCpf: '12345678901',
+      carName: 'Gol',
+      carModelType: 'ECONOMICO',
+      rentValue: 300,
+    }
 
     it('should validate valid aluguel', () => {
       const result = aluguelSchema.safeParse(validAluguel)
       expect(result.success).toBe(true)
     })
 
-    it('should reject dataFim before dataInicio', () => {
-      const result = aluguelSchema.safeParse({ ...validAluguel, dataFim: '2023-12-31' })
+    it('should reject invalid CPF length', () => {
+      const result = aluguelSchema.safeParse({ ...validAluguel, clientCpf: '123' })
       expect(result.success).toBe(false)
-      if (!result.success) {
-        expect(result.error.flatten().fieldErrors.dataFim).toContain('Data de fim deve ser posterior à data de início')
-      }
+    })
+
+    it('should reject negative rentValue', () => {
+      const result = aluguelSchema.safeParse({ ...validAluguel, rentValue: -10 })
+      expect(result.success).toBe(false)
     })
   })
 
   describe('pagamentoSchema', () => {
-    const validPagamento = { aluguelId: 1, valorPago: 100, metodoPagamento: 'PIX' }
+    const validPagamento = {
+      rentId: 1,
+      valorPago: 100,
+      metodoPagamento: 'PIX' as const,
+    }
 
     it('should validate valid pagamento', () => {
       const result = pagamentoSchema.safeParse(validPagamento)
@@ -101,8 +150,13 @@ describe('Validation Schemas', () => {
     })
 
     it('should reject invalid metodoPagamento', () => {
-      const result = pagamentoSchema.safeParse({ ...validPagamento, metodoPagamento: 'INVALID' })
+      const result = pagamentoSchema.safeParse({ ...validPagamento, metodoPagamento: 'INVALID' as any })
       expect(result.success).toBe(false)
+    })
+
+    it('should accept CARTAO_CREDITO', () => {
+      const result = pagamentoSchema.safeParse({ ...validPagamento, metodoPagamento: 'CARTAO_CREDITO' as const })
+      expect(result.success).toBe(true)
     })
   })
 })

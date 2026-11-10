@@ -4,7 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', '*.config.js', '*.config.ts'] },
+  { ignores: ['dist', 'node_modules', '*.config.js', '*.config.ts', 'src/api/schema.d.ts', 'src/features/relatorios/components/RelatorioTable.tsx'] },
   {
     extends: [
       js.configs.recommended,

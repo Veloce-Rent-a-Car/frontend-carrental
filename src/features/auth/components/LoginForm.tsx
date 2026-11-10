@@ -12,28 +12,29 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      await login(data.email, data.senha)
+      await login(data.cpf, data.password)
     } catch (err) {
-      // Error is handled by the auth context redirect
+      // Error handled by auth context redirect
     }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
       <Input
-        label="Email"
-        type="email"
-        placeholder="seu@email.com"
-        error={errors.email?.message}
-        {...register('email')}
-        autoComplete="email"
+        label="CPF"
+        type="text"
+        placeholder="12345678901"
+        error={errors.cpf?.message}
+        {...register('cpf')}
+        autoComplete="username"
+        maxLength={11}
       />
       <Input
         label="Senha"
         type="password"
         placeholder="••••••••"
-        error={errors.senha?.message}
-        {...register('senha')}
+        error={errors.password?.message}
+        {...register('password')}
         autoComplete="current-password"
       />
       <Button type="submit" className="w-full" loading={isSubmitting}>

@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Button, Select, Input } from '@/components'
+import { Button, Input, Select } from '@/components'
 import { pagamentoSchema, type PagamentoForm } from '@/lib/validation'
 import { useCriarPagamento } from '../hooks/usePagamentos'
 import { useAlugueis } from '@/features/alugueis/hooks/useAlugueis'
@@ -16,18 +16,18 @@ export function PagamentoForm({ onClose }: PagamentoFormProps) {
   const { data: alugueis } = useAlugueis()
   const { showToast } = useToast()
 
-  const alugueisPendentes = (alugueis || []).filter(a => a.status === 'PENDENTE' || a.status === 'ATIVO')
+  const alugueisPendentes = (alugueis || []).filter(a => a.status === 'PENDING' || a.status === 'ACTIVE' || a.status === 'CONFIRMED')
   const aluguelOptions = alugueisPendentes.map(a => ({ 
     value: String(a.id), 
-    label: `#${a.id} - ${a.cliente.nome} - ${a.carro.marca} ${a.carro.modelo} - ${formatCurrency(a.valorTotal)}` 
+    label: `#${a.id} - ${a.client.name} - ${a.car.modelo} - ${formatCurrency(a.rentValue)}` 
   }))
 
   const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<PagamentoForm>({
     resolver: zodResolver(pagamentoSchema),
   })
 
-  const aluguelId = watch('aluguelId')
-  const selectedAluguel = alugueis?.find(a => a.id === Number(aluguelId))
+  const rentId = watch('rentId')
+  const selectedAluguel = alugueis?.find(a => a.id === Number(rentId))
 
   const onSubmit = async (data: PagamentoForm) => {
     try {
@@ -46,15 +46,15 @@ export function PagamentoForm({ onClose }: PagamentoFormProps) {
         label="Aluguel"
         placeholder="Selecione um aluguel pendente"
         options={aluguelOptions}
-        error={errors.aluguelId?.message}
-        {...register('aluguelId')}
+        error={errors.rentId?.message}
+        {...register('rentId')}
       />
       {selectedAluguel && (
         <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
-          <p className="text-sm text-slate-600"><strong>Cliente:</strong> {selectedAluguel.cliente.nome}</p>
-          <p className="text-sm text-slate-600"><strong>Carro:</strong> {selectedAluguel.carro.marca} {selectedAluguel.carro.modelo}</p>
-          <p className="text-sm text-slate-600"><strong>Período:</strong> {formatDate(selectedAluguel.dataInicio)} a {formatDate(selectedAluguel.dataFim)}</p>
-          <p className="text-sm text-slate-600"><strong>Total do Aluguel:</strong> {formatCurrency(selectedAluguel.valorTotal)}</p>
+          <p className="text-sm text-slate-600"><strong>Cliente:</strong> {selectedAluguel.client.name}</p>
+          <p className="text-sm text-slate-600"><strong>Carro:</strong> {selectedAluguel.car.modelo}</p>
+          <p className="text-sm text-slate-600"><strong>Período:</strong> {formatDate(selectedAluguel.startDate)} a {selectedAluguel.endDate ? formatDate(selectedAluguel.endDate) : '—'}</p>
+          <p className="text-sm text-slate-600"><strong>Total do Aluguel:</strong> {formatCurrency(selectedAluguel.rentValue)}</p>
           <p className="text-sm text-slate-600"><strong>Status:</strong> <span className="font-medium">{getStatusLabel(selectedAluguel.status)}</span></p>
         </div>
       )}
@@ -70,11 +70,8 @@ export function PagamentoForm({ onClose }: PagamentoFormProps) {
         label="Método de Pagamento"
         placeholder="Selecione"
         options={[
-          { value: 'DINHEIRO', label: 'Dinheiro' },
-          { value: 'CARTAO_CREDITO', label: 'Cartão de Crédito' },
-          { value: 'CARTAO_DEBITO', label: 'Cartão de Débito' },
           { value: 'PIX', label: 'PIX' },
-          { value: 'TRANSFERENCIA', label: 'Transferência' },
+          { value: 'CARTAO_CREDITO', label: 'Cartão de Crédito' },
         ]}
         error={errors.metodoPagamento?.message}
         {...register('metodoPagamento')}

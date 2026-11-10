@@ -70,7 +70,7 @@ export function CarrosPage() {
 
       <Modal isOpen={!!deletingCarro} onClose={() => setDeletingCarro(null)} title="Confirmar Exclusão">
         <p className="text-slate-600 mb-6">
-          Tem certeza que deseja excluir <strong>{deletingCarro?.marca} {deletingCarro?.modelo}</strong> ({deletingCarro?.placa})?
+          Tem certeza que deseja excluir <strong>{deletingCarro?.modelo}</strong> ({deletingCarro?.placa})?
         </p>
         <div className="flex gap-3 justify-end">
           <Button variant="secondary" onClick={() => setDeletingCarro(null)}>Cancelar</Button>

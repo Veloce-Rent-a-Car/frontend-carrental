@@ -4,6 +4,7 @@ import { useCarros, useCriarCarro, useAtualizarCarro, useDeletarCarro } from './
 import { getCarros, createCarro, updateCarro, deleteCarro } from '@/api/carros'
 import { ReactNode } from 'react'
 import { vi, describe, it, beforeEach, expect } from 'vitest'
+import type { Carro } from '@/api/types'
 
 vi.mock('@/api/carros')
 
@@ -27,8 +28,8 @@ describe('useCarros', () => {
   })
 
   it('should fetch carros', async () => {
-    const mockCarros = [
-      { id: 1, marca: 'VW', modelo: 'Gol', ano: 2020, placa: 'ABC1D23', cor: 'Prata', valorDiaria: 150, disponivel: true, createdAt: '', updatedAt: '' },
+    const mockCarros: Carro[] = [
+      { id: 1, modelo: 'Gol', placa: 'ABC1D23', categoria: 'ECONOMICO', valorDaDiaria: 150, statusDisponibilidade: 'DISPONIVEL' },
     ]
     mockGetCarros.mockResolvedValue(mockCarros)
 
@@ -39,13 +40,13 @@ describe('useCarros', () => {
   })
 
   it('should create carro', async () => {
-    const newCarro = { id: 2, marca: 'Fiat', modelo: 'Uno', ano: 2021, placa: 'XYZ9W87', cor: 'Branco', valorDiaria: 120, disponivel: true, createdAt: '', updatedAt: '' }
+    const newCarro: Carro = { id: 2, modelo: 'Uno', placa: 'XYZ9W87', categoria: 'ECONOMICO', valorDaDiaria: 120, statusDisponibilidade: 'DISPONIVEL' }
     mockCreateCarro.mockResolvedValue(newCarro)
 
     const { result } = renderHook(() => useCriarCarro(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync({ marca: 'Fiat', modelo: 'Uno', ano: 2021, placa: 'XYZ9W87', cor: 'Branco', valorDiaria: 120 })
+      await result.current.mutateAsync({ modelo: 'Uno', placa: 'XYZ9W87', categoria: 'ECONOMICO', valorDaDiaria: 120, statusDisponibilidade: 'DISPONIVEL' })
     })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -53,13 +54,13 @@ describe('useCarros', () => {
   })
 
   it('should update carro', async () => {
-    const updatedCarro = { id: 1, marca: 'VW', modelo: 'Gol', ano: 2022, placa: 'ABC1D23', cor: 'Preto', valorDiaria: 160, disponivel: true, createdAt: '', updatedAt: '' }
+    const updatedCarro: Carro = { id: 1, modelo: 'Gol', placa: 'ABC1D23', categoria: 'ECONOMICO', valorDaDiaria: 160, statusDisponibilidade: 'DISPONIVEL' }
     mockUpdateCarro.mockResolvedValue(updatedCarro)
 
     const { result } = renderHook(() => useAtualizarCarro(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync({ id: 1, data: { marca: 'VW', modelo: 'Gol', ano: 2022, placa: 'ABC1D23', cor: 'Preto', valorDiaria: 160 } })
+      await result.current.mutateAsync({ id: 1, data: { modelo: 'Gol', placa: 'ABC1D23', categoria: 'ECONOMICO', valorDaDiaria: 160, statusDisponibilidade: 'DISPONIVEL' } })
     })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))

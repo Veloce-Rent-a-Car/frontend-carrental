@@ -1,20 +1,20 @@
 import { api } from './client'
-import type { Cliente, ClienteRequest } from './types'
+import type { Client } from './types'
 
-export async function getClientes(): Promise<Cliente[]> {
-  return api.get<Cliente[]>('/api/clients')
+export async function getClientes(): Promise<Client[]> {
+  return api.get<Client[]>('/api/clients')
 }
 
-export async function getCliente(id: number): Promise<Cliente> {
-  return api.get<Cliente>(`/api/clients/${id}`)
+export async function getCliente(id: number): Promise<Client> {
+  return api.get<Client>(`/api/clients/${id}`)
 }
 
-export async function createCliente(data: ClienteRequest): Promise<Cliente> {
-  return api.post<Cliente>('/api/clients', data)
+export async function createCliente(data: Client): Promise<Client> {
+  return api.post<Client>('/api/clients', data)
 }
 
-export async function updateCliente(id: number, data: ClienteRequest): Promise<Cliente> {
-  return api.put<Cliente>(`/api/clients/${id}`, data)
+export async function updateCliente(id: number, data: Client): Promise<Client> {
+  return api.put<Client>(`/api/clients/${id}`, data)
 }
 
 export async function deleteCliente(id: number): Promise<void> {

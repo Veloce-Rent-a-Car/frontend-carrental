@@ -42,16 +42,21 @@ export function formatPlaca(placa: string): string {
 export function getStatusBadgeClass(status: string): string {
   const statusLower = status.toLowerCase()
   switch (statusLower) {
-    case 'ativo':
-    case 'confirmado':
     case 'disponivel':
+    case 'aprovado':
+    case 'active':
+    case 'confirmed':
+    case 'finished':
       return 'badge-success'
     case 'pendente':
+    case 'pending':
+    case 'alugado':
       return 'badge-warning'
     case 'finalizado':
     case 'recusado':
     case 'cancelado':
-    case 'estornado':
+    case 'cancelled':
+    case 'manutencao':
       return 'badge-danger'
     default:
       return 'badge-secondary'
@@ -60,15 +65,17 @@ export function getStatusBadgeClass(status: string): string {
 
 export function getStatusLabel(status: string): string {
   const labels: Record<string, string> = {
-    PENDENTE: 'Pendente',
-    ATIVO: 'Ativo',
-    FINALIZADO: 'Finalizado',
-    CANCELADO: 'Cancelado',
-    CONFIRMADO: 'Confirmado',
-    RECUSADO: 'Recusado',
-    ESTORNADO: 'Estornado',
     DISPONIVEL: 'Disponível',
-    INDISPONIVEL: 'Indisponível',
+    ALUGADO: 'Alugado',
+    MANUTENCAO: 'Manutenção',
+    PENDING: 'Pendente',
+    CONFIRMED: 'Confirmado',
+    ACTIVE: 'Ativo',
+    FINISHED: 'Finalizado',
+    CANCELLED: 'Cancelado',
+    PENDENTE: 'Pendente',
+    APROVADO: 'Aprovado',
+    RECUSADO: 'Recusado',
   }
   return labels[status] || status
 }

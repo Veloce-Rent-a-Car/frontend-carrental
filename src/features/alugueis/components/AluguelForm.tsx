@@ -1,12 +1,9 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Button, Select, Input } from '@/components'
+import { Button, Input } from '@/components'
 import { aluguelSchema, type AluguelForm } from '@/lib/validation'
 import { useCriarAluguel } from '../hooks/useAlugueis'
-import { useClientes } from '@/features/auth/hooks/useClientes'
-import { useCarros } from '@/features/carros/hooks/useCarros'
 import { useToast } from '@/components'
-import { formatCurrency } from '@/lib/formatters'
 
 interface AluguelFormProps {
   onClose: () => void
@@ -14,24 +11,11 @@ interface AluguelFormProps {
 
 export function AluguelForm({ onClose }: AluguelFormProps) {
   const criarAluguel = useCriarAluguel()
-  const { data: clientes } = useClientes()
-  const { data: carros } = useCarros()
   const { showToast } = useToast()
 
-  const clienteOptions = (clientes || []).map(c => ({ value: String(c.id), label: `${c.nome} (${c.cpf})` }))
-  const carroOptions = (carros || []).filter(c => c.disponivel).map(c => ({ value: String(c.id), label: `${c.marca} ${c.modelo} - ${formatCurrency(c.valorDiaria)}/dia` }))
-
-  const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<AluguelForm>({
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<AluguelForm>({
     resolver: zodResolver(aluguelSchema),
   })
-
-  const dataInicio = watch('dataInicio')
-  const dataFim = watch('dataFim')
-  const carroId = watch('carroId')
-
-  const selectedCarro = carros?.find(c => c.id === Number(carroId))
-  const dias = dataInicio && dataFim ? Math.ceil((new Date(dataFim).getTime() - new Date(dataInicio).getTime()) / (1000 * 60 * 60 * 24)) : 0
-  const valorEstimado = selectedCarro && dias > 0 ? selectedCarro.valorDiaria * dias : 0
 
   const onSubmit = async (data: AluguelForm) => {
     try {
@@ -46,43 +30,36 @@ export function AluguelForm({ onClose }: AluguelFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-      <Select
-        label="Cliente"
-        placeholder="Selecione um cliente"
-        options={clienteOptions}
-        error={errors.clienteId?.message}
-        {...register('clienteId')}
+      <Input
+        label="CPF do Cliente"
+        type="text"
+        placeholder="12345678901"
+        error={errors.clientCpf?.message}
+        {...register('clientCpf')}
+        maxLength={11}
       />
-      <Select
-        label="Carro"
-        placeholder="Selecione um carro disponível"
-        options={carroOptions}
-        error={errors.carroId?.message}
-        {...register('carroId')}
+      <Input
+        label="Nome do Carro"
+        type="text"
+        placeholder="Ex: Gol"
+        error={errors.carName?.message}
+        {...register('carName')}
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Input
-          label="Data de Início"
-          type="date"
-          error={errors.dataInicio?.message}
-          {...register('dataInicio')}
-          min={new Date().toISOString().split('T')[0]}
-        />
-        <Input
-          label="Data de Fim"
-          type="date"
-          error={errors.dataFim?.message}
-          {...register('dataFim')}
-          min={dataInicio || new Date().toISOString().split('T')[0]}
-        />
-      </div>
-      {valorEstimado > 0 && (
-        <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <p className="text-sm text-blue-800">
-            Valor estimado: <strong className="text-lg">{formatCurrency(valorEstimado)}</strong> ({dias} diária{dias !== 1 ? 's' : ''})
-          </p>
-        </div>
-      )}
+      <Input
+        label="Modelo/Tipo do Carro"
+        type="text"
+        placeholder="Ex: ECONOMICO"
+        error={errors.carModelType?.message}
+        {...register('carModelType')}
+      />
+      <Input
+        label="Valor do Aluguel"
+        type="number"
+        step="0.01"
+        placeholder="300.00"
+        error={errors.rentValue?.message}
+        {...register('rentValue', { valueAsNumber: true })}
+      />
       <div className="flex gap-3 pt-4">
         <Button type="button" variant="secondary" onClick={onClose} className="flex-1">Cancelar</Button>
         <Button type="submit" loading={isSubmitting} className="flex-1">Criar Aluguel</Button>
